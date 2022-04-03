@@ -1,5 +1,5 @@
 import os
-from tensorflow.keras.optimizers import SGD, Adam
+from keras.optimizers import adam_v2
 from keras.callbacks import EarlyStopping, ModelCheckpoint
 from load_data import load_data_from_npz, load_batch, load_data_names, load_batch_from_names_random
 from models import get_eye_tracker_model
@@ -32,13 +32,13 @@ def generator_val_data(names, path, batch_size, img_ch, img_cols, img_rows):
 
 def train(args):
 
-    os.environ["CUDA_DEVICE_ORDER"] = "PCI_BUS_ID"
-    os.environ["CUDA_VISIBLE_DEVICES"] = args.dev
+    # os.environ["CUDA_DEVICE_ORDER"] = "PCI_BUS_ID"
+    # os.environ["CUDA_VISIBLE_DEVICES"] = args.dev
 
     if args.data == "big":
         dataset_path = "gazecapture_unzip"
     if args.data == "small":
-        dataset_path = "dataset"
+        dataset_path = "eye_tracker_training_dataset.npz"
 
     if args.data == "big":
         train_path = "dataset/train"
@@ -70,8 +70,8 @@ def train(args):
     # print("Done.")
 
     # optimizer
-    sgd = SGD(lr=1e-1, decay=5e-4, momentum=9e-1, nesterov=True)
-    adam = Adam(lr=1e-3)
+    # sgd = SGD(lr=1e-1, decay=5e-4, momentum=9e-1, nesterov=True)
+    adam = adam_v2.Adam(lr=1e-3)
 
     # compile model
     model.compile(optimizer=adam, loss='mse')
@@ -127,4 +127,3 @@ def train(args):
                        ModelCheckpoint("weights/weights.{epoch:03d}-{val_loss:.5f}.hdf5", save_best_only=True)
                        ]
         )
-#%%
